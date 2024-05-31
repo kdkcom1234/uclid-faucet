@@ -23,7 +23,7 @@ export async function POST(req: Request) {
   const body = await req.json();
   const toAddress = body.toAddress
 
-  await client.CosmosBankV1Beta1.tx.sendMsgSend({
+  client.CosmosBankV1Beta1.tx.sendMsgSend({
     value: {
       fromAddress,
       toAddress,
@@ -32,11 +32,10 @@ export async function POST(req: Request) {
       amount: [{ amount: '100000', denom: 'ucli' }],
       gas: '100000',
     },
+  }).catch(r => {
+    console.log(`${new Date().toLocaleString()} | toAddress: ${toAddress}`)
+    console.log(`${new Date().toLocaleString()} | ERROR: ${r.message}`)
   })
-    .catch(r => {
-      console.log(`${new Date().toLocaleString()} | toAddress: ${toAddress}`)
-      console.log(`${new Date().toLocaleString()} | ERROR: ${r.message}`)
-    })
 
   return Response.json({})
   // return Response.json({ gasUsed: txRes.gasUsed.toString(), gasWanted: txRes.gasWanted.toString() })
