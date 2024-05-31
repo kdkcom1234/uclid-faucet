@@ -4,12 +4,12 @@ import { IgntModule as CosmosBankV1Beta1 } from '../../../../uclid-tsclient/cosm
 import { DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
 
 
-// mage1z8hm4ux2mh85dn8a9kz900jdv855a4vps65egr
+// uclid1z8hm4ux2mh85dn8a9kz900jdv855a4vp6dl3kd
 const faucetMnemonic =
   "upgrade weekend letter main drink mail elbow sausage wild pistol journey attract focus permit acoustic gap decade sound clump brand great range fine round";
 
 export async function POST(req: Request) {
-  const wallet = await DirectSecp256k1HdWallet.fromMnemonic(faucetMnemonic, { prefix: "mage" });
+  const wallet = await DirectSecp256k1HdWallet.fromMnemonic(faucetMnemonic, { prefix: "uclid" });
   const Client = IgniteClient.plugin([CosmosBankV1Beta1])
   const client = new Client(
     {
@@ -23,7 +23,7 @@ export async function POST(req: Request) {
   const body = await req.json();
   const toAddress = body.toAddress
 
-  client.CosmosBankV1Beta1.tx.sendMsgSend({
+  await client.CosmosBankV1Beta1.tx.sendMsgSend({
     value: {
       fromAddress,
       toAddress,
@@ -32,10 +32,12 @@ export async function POST(req: Request) {
       amount: [{ amount: '100000', denom: 'ucli' }],
       gas: '100000',
     },
-  }).catch(r => {
-    console.log(`${new Date().toLocaleString()} | toAddress: ${toAddress}`)
-    console.log(`${new Date().toLocaleString()} | ERROR: ${r.message}`)
   })
+    .catch(r => {
+      console.log(`${new Date().toLocaleString()} | toAddress: ${toAddress}`)
+      console.log(`${new Date().toLocaleString()} | ERROR: ${r.message}`)
+    })
 
   return Response.json({})
+  // return Response.json({ gasUsed: txRes.gasUsed.toString(), gasWanted: txRes.gasWanted.toString() })
 }
