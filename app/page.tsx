@@ -1,3 +1,3 @@
 export default function Home() {
-  return <main>Uclid Devnet</main>;
+  return <main></main>;
 }

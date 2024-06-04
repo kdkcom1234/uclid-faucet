@@ -1,8 +1,12 @@
 import type { Metadata } from "next";
+import NavBar from "./components/NavBar";
+
+// These styles apply to every route in the application
+import "@/app/global.css";
 
 export const metadata: Metadata = {
-  title: "Uclid Devnet",
-  description: "Uclid Devnet",
+  title: "UCLID Hub Devnet",
+  description: "UCLID Hub Devnet",
 };
 
 export default function RootLayout({
@@ -12,7 +16,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <NavBar />
+        {children}
+      </body>
     </html>
   );
 }
