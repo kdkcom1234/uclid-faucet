@@ -135,3 +135,9 @@ crypto.subtle
     console.error("Error calculating hash:", error);
   });
 ```
+
+### extracting account transaction data
+
+```js
+// http://221.148.71.114:26657/tx_search?query=%22message.sender=%27uclid1z8hm4ux2mh85dn8a9kz900jdv855a4vp6dl3kd%27%22&prove=true&page=1&per_page=30&order_by=%22desc%22
+```
