@@ -41,21 +41,35 @@ const WalletPage: React.FC = () => {
     return entropy;
   };
 
+  const getPBKDF2Key = async (password: string, salt: Uint8Array) => {
+    const enc = new TextEncoder();
+    const keyMaterial = await crypto.subtle.importKey(
+      "raw",
+      enc.encode(password),
+      { name: "PBKDF2" },
+      false,
+      ["deriveKey"]
+    );
+    return crypto.subtle.deriveKey(
+      {
+        name: "PBKDF2",
+        salt: salt,
+        iterations: 100000,
+        hash: "SHA-256",
+      },
+      keyMaterial,
+      { name: "AES-GCM", length: 256 },
+      false,
+      ["encrypt", "decrypt"]
+    );
+  };
+
   const encryptEntropy = async (entropy: string, password: string) => {
     const encodedEntropy = new TextEncoder().encode(entropy);
-    const encodedPassword = new TextEncoder().encode(password);
+    const salt = crypto.getRandomValues(new Uint8Array(16)); // 솔트 생성
+    const key = await getPBKDF2Key(password, salt);
 
-    const keyData = await crypto.subtle.digest("SHA-256", encodedPassword);
-
-    const key = await crypto.subtle.importKey(
-      "raw",
-      keyData,
-      { name: "AES-GCM" },
-      false,
-      ["encrypt"]
-    );
-
-    const iv = crypto.getRandomValues(new Uint8Array(12));
+    const iv = crypto.getRandomValues(new Uint8Array(12)); // IV 생성
     const encrypted = await crypto.subtle.encrypt(
       { name: "AES-GCM", iv: iv },
       key,
@@ -64,25 +78,16 @@ const WalletPage: React.FC = () => {
 
     return {
       iv: Array.from(iv),
+      salt: Array.from(salt),
       data: Array.from(new Uint8Array(encrypted)),
     };
   };
 
   const decryptEntropy = async (encryptedData: any, password: string) => {
-    const encodedPassword = new TextEncoder().encode(password);
-
-    const keyData = await crypto.subtle.digest("SHA-256", encodedPassword);
-
-    const key = await crypto.subtle.importKey(
-      "raw",
-      keyData,
-      { name: "AES-GCM" },
-      false,
-      ["decrypt"]
-    );
-
     const iv = new Uint8Array(encryptedData.iv);
+    const salt = new Uint8Array(encryptedData.salt);
     const data = new Uint8Array(encryptedData.data);
+    const key = await getPBKDF2Key(password, salt);
 
     const decrypted = await crypto.subtle.decrypt(
       { name: "AES-GCM", iv: iv },
@@ -111,7 +116,12 @@ const WalletPage: React.FC = () => {
     const encryptedData = JSON.parse(
       localStorage.getItem("encryptedEntropy") || "{}"
     );
-    if (encryptedData && password) {
+    if (
+      encryptedData.iv &&
+      encryptedData.salt &&
+      encryptedData.data &&
+      password
+    ) {
       const decryptedEntropy = await decryptEntropy(encryptedData, password);
       setEntropy(decryptedEntropy);
     } else {
