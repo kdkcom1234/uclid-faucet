@@ -1,39 +1,56 @@
 import useSWR from "swr";
 import { Client } from "../../../uclid-tsclient";
-import { AccountData } from "@cosmjs/proto-signing";
+import { DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
 
-const client = new Client({
-  apiURL: `${process.env.NEXT_PUBLIC_NODE_API_URL}`,
-  rpcURL: `${process.env.NEXT_PUBLIC_NODE_RPC_URL}`,
-  prefix: "uclid",
-});
+import * as bip39 from "bip39";
+import { wordlist } from "@/app/constants/wordlist";
 
-const keplrConfig = {
-  stakeCurrency: {
-    coinDenom: "CLI",
-    coinMinimalDenom: "ucli",
-    coinDecimals: 6,
+const SIGN_MESSAGE = "Sign for using UCLID Hub";
+
+const getSignedMessage = async () => {
+  let signature = "";
+  let address = "";
+  if (typeof window.ethereum !== "undefined") {
+    const accounts = await window.ethereum.request({
+      method: "eth_requestAccounts",
+    });
+    address = accounts[0] as string;
+    signature = (await window.ethereum.request({
+      method: "personal_sign",
+      params: [SIGN_MESSAGE, address],
+    })) as string;
+  } else {
+    alert("MetaMask is not installed!");
+  }
+
+  return { signature, address };
+};
+
+const generateEntropy = async (signature: string) => {
+  const hashBuffer = await crypto.subtle.digest(
+    "SHA-256",
+    new TextEncoder().encode(signature)
+  );
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const hashHex = hashArray
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+  const entropy = `prv-${hashHex}`;
+  return entropy;
+};
+
+const client = new Client(
+  {
+    apiURL: `${process.env.NEXT_PUBLIC_NODE_API_URL}`,
+    rpcURL: `${process.env.NEXT_PUBLIC_NODE_RPC_URL}`,
   },
-  currencies: [
-    {
-      coinDenom: "CLI",
-      coinMinimalDenom: "ucli",
-      coinDecimals: 6,
-    },
-  ],
-  feeCurrencies: [
-    {
-      coinDenom: "CLI",
-      coinMinimalDenom: "ucli",
-      coinDecimals: 6,
-    },
-  ],
-  chainName: "UCLID Hub Prenet",
-}
+  undefined
+);
 
 interface IWalletData {
   client: typeof client;
-  address: string
+  address: string;
+  evmAddress: string;
 }
 
 export const useWalletData = () => {
@@ -41,30 +58,38 @@ export const useWalletData = () => {
 
   const connectWallet = () => {
     mutate(async () => {
-      let account: AccountData | undefined;
+      const { signature, address: evmAddress } = await getSignedMessage();
+      const entropy = await generateEntropy(signature);
 
-      console.log("---window.keplr---");
-      console.log(window.keplr);
-      if (!window.keplr) {
-        window.location.href = "https://www.keplr.app/download";
-        return { client, address: account ? account.address : "" } as IWalletData
+      let finalEntropy = entropy.replace("prv-", "");
+      if (finalEntropy.length % 2 !== 0) {
+        finalEntropy = "0" + finalEntropy;
       }
 
-      try {
-        await client.useKeplr(keplrConfig);
-        if (client.signer) {
-          const accounts = await client.signer?.getAccounts();
-          account = accounts ? accounts[0] : undefined;
-          console.log(account);
-        }
-      } catch (e: any) {
-        alert(e.message);
-      }
+      const mnemonic = bip39.entropyToMnemonic(finalEntropy, wordlist);
+      console.log("Mnemonic:", mnemonic);
 
-      return { client, address: account ? account.address : "" } as IWalletData
-    })
-  }
+      const wallet = await DirectSecp256k1HdWallet.fromMnemonic(mnemonic, {
+        prefix: "uclid",
+      });
+      const [account] = await wallet.getAccounts();
+      console.log("Address:", account.address);
 
-  return { walletData, connectWallet }
-}
+      client.useSigner(wallet);
 
+      client.CosmosBankV1Beta1.query
+        .queryAllBalances(account.address)
+        .then((result) => {
+          console.log(result);
+        });
+
+      return {
+        client,
+        address: account ? account.address : "",
+        evmAddress,
+      } as IWalletData;
+    });
+  };
+
+  return { walletData, connectWallet };
+};

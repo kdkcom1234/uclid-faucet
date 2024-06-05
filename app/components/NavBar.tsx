@@ -33,11 +33,17 @@ const NavBar = () => {
             Connect
           </button>
         )}
-        {walletData?.address && (
-          <span>
-            {walletData.address.slice(0, 11)}...
-            {walletData.address.slice(-5)}
-          </span>
+        {walletData?.address && walletData?.evmAddress && (
+          <div className="flex flex-col gap-2">
+            <span>
+              {walletData.evmAddress.slice(0, 6)}...
+              {walletData.evmAddress.slice(-5)}
+            </span>
+            <span>
+              {walletData.address.slice(0, 11)}...
+              {walletData.address.slice(-5)}
+            </span>
+          </div>
         )}
       </div>
     </nav>
