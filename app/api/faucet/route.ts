@@ -1,15 +1,9 @@
-// import { Client } from "../../../../uclid-tsclient"
 import { IgniteClient } from "../../../../uclid-tsclient/client"
 import { IgntModule as CosmosBankV1Beta1 } from '../../../../uclid-tsclient/cosmos.bank.v1beta1'
 import { DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
 
-
-// uclid1z8hm4ux2mh85dn8a9kz900jdv855a4vp6dl3kd
-const faucetMnemonic =
-  "upgrade weekend letter main drink mail elbow sausage wild pistol journey attract focus permit acoustic gap decade sound clump brand great range fine round";
-
 export async function POST(req: Request) {
-  const wallet = await DirectSecp256k1HdWallet.fromMnemonic(faucetMnemonic, { prefix: "uclid" });
+  const wallet = await DirectSecp256k1HdWallet.fromMnemonic(process.env.FAUCET_MNEMONIC!.toString(), { prefix: "uclid" });
   const Client = IgniteClient.plugin([CosmosBankV1Beta1])
   const client = new Client(
     {

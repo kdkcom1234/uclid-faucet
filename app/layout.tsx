@@ -5,8 +5,8 @@ import NavBar from "./components/NavBar";
 import "@/app/global.css";
 
 export const metadata: Metadata = {
-  title: "UCLID Hub Devnet",
-  description: "UCLID Hub Devnet",
+  title: "UCLID Hub Prenet",
+  description: "UCLID Hub Prenet",
 };
 
 export default function RootLayout({

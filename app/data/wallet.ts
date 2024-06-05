@@ -1,7 +1,6 @@
 import useSWR from "swr";
 import { Client } from "../../../uclid-tsclient";
 import { AccountData } from "@cosmjs/proto-signing";
-import { IgniteClient } from "../../../uclid-tsclient/client";
 
 const client = new Client({
   apiURL: `${process.env.NEXT_PUBLIC_NODE_API_URL}`,
@@ -29,7 +28,7 @@ const keplrConfig = {
       coinDecimals: 6,
     },
   ],
-  chainName: "UCLID Hub Devnet",
+  chainName: "UCLID Hub Prenet",
 }
 
 interface IWalletData {

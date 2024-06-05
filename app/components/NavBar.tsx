@@ -6,7 +6,7 @@ const NavBar = () => {
   const { walletData, connectWallet } = useWalletData();
 
   return (
-    <nav className="h-28 pt-10 pb-6 px-8 mx-4 flex items-center border-solid border-b-2 border-slate-200">
+    <nav className="h-24 py-6 px-8 mx-4 flex items-center border-solid border-b-2 border-slate-200">
       <div className="grow-0 flex items-center">
         <cite className="not-italic text-2xl">UCLID Hub</cite>
         <ul className="flex ml-20 gap-6">

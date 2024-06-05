@@ -73,7 +73,7 @@ const FaucetPage = () => {
   return (
     <main className="flex flex-col items-center">
       <section className="text-center mt-16" style={{ width: "800px" }}>
-        <header className="text-3xl">UCLID HUB DEVNET FAUCET</header>
+        <header className="text-3xl">UCLID HUB PRENET FAUCET</header>
         <p className="text-base text-slate-500">
           Fast and reliable. 0.1 CLI/address
         </p>
