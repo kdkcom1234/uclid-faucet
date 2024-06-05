@@ -1,8 +1,8 @@
 import useSWR from "swr";
 import { Client } from "../../../uclid-tsclient";
 import { DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
-
 import * as bip39 from "bip39";
+import { sha256 } from "js-sha256";
 import { wordlist } from "@/app/constants/wordlist";
 
 const SIGN_MESSAGE = "Sign for using UCLID Hub";
@@ -27,16 +27,7 @@ const getSignedMessage = async () => {
 };
 
 const generateEntropy = async (signature: string) => {
-  const hashBuffer = await crypto.subtle.digest(
-    "SHA-256",
-    new TextEncoder().encode(signature)
-  );
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  const hashHex = hashArray
-    .map((b) => b.toString(16).padStart(2, "0"))
-    .join("");
-  const entropy = `prv-${hashHex}`;
-  return entropy;
+  return sha256(signature);
 };
 
 const client = new Client(
@@ -59,14 +50,12 @@ export const useWalletData = () => {
   const connectWallet = () => {
     mutate(async () => {
       const { signature, address: evmAddress } = await getSignedMessage();
-      const entropy = await generateEntropy(signature);
-
-      let finalEntropy = entropy.replace("prv-", "");
-      if (finalEntropy.length % 2 !== 0) {
-        finalEntropy = "0" + finalEntropy;
+      let entropy = await generateEntropy(signature);
+      if (entropy.length % 2 !== 0) {
+        entropy = "0" + entropy;
       }
 
-      const mnemonic = bip39.entropyToMnemonic(finalEntropy, wordlist);
+      const mnemonic = bip39.entropyToMnemonic(entropy, wordlist);
       console.log("Mnemonic:", mnemonic);
 
       const wallet = await DirectSecp256k1HdWallet.fromMnemonic(mnemonic, {
