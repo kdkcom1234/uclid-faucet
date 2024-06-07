@@ -71,12 +71,15 @@ const FaucetPage = () => {
 
   return (
     <main className="flex flex-col items-center">
-      <section className="text-center mt-16" style={{ width: "800px" }}>
+      <section className="text-center mt-16 lg:w-2/4 w-full lg:px-0 px-4">
         <header className="text-3xl">UCLID HUB PRENET FAUCET</header>
-        <p className="text-base text-slate-500">
+        <p className="text-base text-slate-500 mt-2">
           Fast and reliable. 0.1 CLI/address
         </p>
-        <form className="flex mt-16 gap-2" onSubmit={handleSubmit}>
+        <form
+          className="flex mt-16 gap-2 lg:flex-row flex-col"
+          onSubmit={handleSubmit}
+        >
           <input
             className="appearance-none border rounded w-full py-2 px-3 text-gray-700"
             type="text"
@@ -86,7 +89,7 @@ const FaucetPage = () => {
           />
           <button
             disabled={requested}
-            className="w-40 bg-transparent hover:bg-slate-950 text-slate-700 font-semibold hover:text-white py-2 px-4 border border-slate-400 hover:border-transparent rounded"
+            className="lg:w-40 w-full bg-transparent hover:bg-slate-950 text-slate-700 font-semibold hover:text-white py-2 px-4 border border-slate-400 hover:border-transparent rounded"
           >
             Send Me CLI
           </button>

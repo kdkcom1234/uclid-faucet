@@ -10,10 +10,10 @@ const NavBar = () => {
   console.log(balanceData?.balance);
 
   return (
-    <nav className="h-24 py-6 px-8 mx-4 flex items-center border-solid border-b-2 border-slate-200">
-      <div className="grow-0 flex items-center">
-        <cite className="not-italic text-2xl">UCLID Hub</cite>
-        <ul className="flex ml-20 gap-6">
+    <nav className="lg:h-24 py-6 px-8 mx-4 flex lg:items-center lg:flex-row flex-col border-solid border-b-2 border-slate-200">
+      <div className="grow-0 flex lg:flex-row flex-col lg:items-center">
+        <cite className="not-italic text-2xl lg:mb-0 mb-6">UCLID Hub</cite>
+        <ul className="flex lg:ml-20 lg:gap-6 gap-4 lg:flex-row flex-col">
           <li>
             <Link href="/faucet">Faucet</Link>
           </li>
@@ -24,11 +24,11 @@ const NavBar = () => {
             <Link href="/explorer">Explorer</Link>
           </li>
           <li>
-            <Link href="/light-app">Light App</Link>
+            <Link href="/probe-node">Probe Node</Link>
           </li>
         </ul>
       </div>
-      <div className="grow flex justify-end">
+      <div className="grow flex lg:justify-end justify-start lg:mt-0 mt-6">
         {!walletData?.address && (
           <button
             onClick={connectWallet}
@@ -39,25 +39,25 @@ const NavBar = () => {
         )}
         {walletData?.address && walletData?.evmAddress && (
           <div className="flex gap-2">
-            <div className="flex flex-col gap-2">
-              <div>
+            <div className="flex flex-col lg:gap-2 gap-1">
+              <small>
                 {walletData.evmAddress.slice(0, 6)}...
                 {walletData.evmAddress.slice(-5)}
-              </div>
-              <div>
+              </small>
+              <small>
                 {walletData.address.slice(0, 11)}...
                 {walletData.address.slice(-5)}
-              </div>
+              </small>
             </div>
-            <div className="flex flex-col gap-2">
-              <div>
+            <div className="flex flex-col lg:gap-2 gap-1">
+              <small>
                 {balanceData?.evmBalance}
                 {EVM_NATIVE_COIN_SYMBOL}
-              </div>
-              <div>
+              </small>
+              <small>
                 {balanceData?.balance}
                 {DENOM_SYMBOL}
-              </div>
+              </small>
             </div>
           </div>
         )}

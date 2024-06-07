@@ -108,8 +108,12 @@ const TransferPage = () => {
 
   return (
     <main className="flex flex-col items-center">
-      <section className="text-center mt-16" style={{ width: "800px" }}>
-        <form className="flex gap-2" onSubmit={handleSubmit}>
+      <section className="text-center mt-16  lg:w-2/4 w-full lg:px-0 px-4">
+        <header className="text-3xl">UCLID HUB PRENET Transfer</header>
+        <form
+          className="flex gap-2 mt-16 lg:flex-row flex-col"
+          onSubmit={handleSubmit}
+        >
           <input
             className="appearance-none border rounded w-full py-2 px-3 text-gray-700"
             type="text"
@@ -127,7 +131,7 @@ const TransferPage = () => {
           />
           <button
             disabled={loading}
-            className="flex justify-center items-center w-40 bg-transparent hover:bg-slate-950 text-slate-700 font-semibold hover:text-white py-2 px-4 border border-slate-400 hover:border-transparent rounded"
+            className="flex justify-center items-center lg:w-40 w-full bg-transparent hover:bg-slate-950 text-slate-700 font-semibold hover:text-white py-2 px-4 border border-slate-400 hover:border-transparent rounded"
           >
             {loading && (
               <svg
