@@ -8,6 +8,10 @@ import {
 } from "react";
 import { useWalletData } from "../data/wallet";
 import SuccessToast from "../components/Toast";
+import {
+  DENOM_MICRO_NAME,
+  getWalletClientFromEvmSignature,
+} from "../lib/wallet";
 
 const TransferPage = () => {
   const { walletData } = useWalletData();
@@ -27,7 +31,7 @@ const TransferPage = () => {
     }
 
     if (walletData) {
-      const { client, address: fromAddress } = walletData;
+      const { address: fromAddress } = walletData;
       const toAddress = addressRef.current.value;
 
       if (!fromAddress) {
@@ -46,6 +50,9 @@ const TransferPage = () => {
       }
 
       try {
+        const client = await getWalletClientFromEvmSignature();
+        const amount = (+amountRef.current.value * 1000000).toString();
+
         setLoading(true);
         const res = await client.CosmosBankV1Beta1.tx.sendMsgSend({
           value: {
@@ -53,8 +60,8 @@ const TransferPage = () => {
             toAddress,
             amount: [
               {
-                amount: (+amountRef.current.value * 1000000).toString(),
-                denom: "ucli",
+                amount,
+                denom: DENOM_MICRO_NAME,
               },
             ],
           },
@@ -62,13 +69,17 @@ const TransferPage = () => {
           // min-gas-price = 1ucli
           // gas fee = 60000ucli ~ 80000ucli
           fee: {
-            amount: [{ amount: "100000", denom: "ucli" }],
+            amount: [{ amount: "100000", denom: DENOM_MICRO_NAME }],
             gas: "100000",
           },
         });
 
+        const { transactionHash, rawLog } = res;
         setRequested(true);
-        setTxHash(res.transactionHash);
+        setTxHash(transactionHash);
+        if (rawLog) {
+          alert(rawLog);
+        }
 
         timeoutRef.current = setTimeout(() => {
           setRequested(false);
@@ -104,12 +115,15 @@ const TransferPage = () => {
             type="text"
             placeholder="Recipient Address, (uclid1....)"
             ref={addressRef}
+            disabled={loading}
           />
           <input
             className="appearance-none border rounded py-2 px-3 text-gray-700"
-            type="text"
+            type="number"
+            step="0.000001"
             placeholder="Amount of CLI"
             ref={amountRef}
+            disabled={loading}
           />
           <button
             disabled={loading}

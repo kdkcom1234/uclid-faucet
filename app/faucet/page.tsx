@@ -49,10 +49,9 @@ const FaucetPage = () => {
       body: JSON.stringify({ toAddress }),
     });
 
-    addressRef.current.value = "";
+    // addressRef.current.value = "";
 
     setRequested(true);
-
     timeoutRef.current = setTimeout(() => {
       setRequested(false);
     }, 2100);
@@ -83,6 +82,7 @@ const FaucetPage = () => {
             type="text"
             placeholder="Enter Your Address, (uclid1....)"
             ref={addressRef}
+            disabled={requested}
           />
           <button
             disabled={requested}

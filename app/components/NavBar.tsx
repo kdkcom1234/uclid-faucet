@@ -1,9 +1,13 @@
 "use client";
 import Link from "next/link";
 import { useWalletData } from "../data/wallet";
+import { useBalanceData } from "../data/balance";
+import { DENOM_SYMBOL, EVM_NATIVE_COIN_SYMBOL } from "../lib/wallet";
 
 const NavBar = () => {
   const { walletData, connectWallet } = useWalletData();
+  const { balanceData } = useBalanceData(walletData);
+  console.log(balanceData?.balance);
 
   return (
     <nav className="h-24 py-6 px-8 mx-4 flex items-center border-solid border-b-2 border-slate-200">
@@ -34,15 +38,27 @@ const NavBar = () => {
           </button>
         )}
         {walletData?.address && walletData?.evmAddress && (
-          <div className="flex flex-col gap-2">
-            <span>
-              {walletData.evmAddress.slice(0, 6)}...
-              {walletData.evmAddress.slice(-5)}
-            </span>
-            <span>
-              {walletData.address.slice(0, 11)}...
-              {walletData.address.slice(-5)}
-            </span>
+          <div className="flex gap-2">
+            <div className="flex flex-col gap-2">
+              <div>
+                {walletData.evmAddress.slice(0, 6)}...
+                {walletData.evmAddress.slice(-5)}
+              </div>
+              <div>
+                {walletData.address.slice(0, 11)}...
+                {walletData.address.slice(-5)}
+              </div>
+            </div>
+            <div className="flex flex-col gap-2">
+              <div>
+                {balanceData?.evmBalance}
+                {EVM_NATIVE_COIN_SYMBOL}
+              </div>
+              <div>
+                {balanceData?.balance}
+                {DENOM_SYMBOL}
+              </div>
+            </div>
           </div>
         )}
       </div>
