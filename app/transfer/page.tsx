@@ -109,7 +109,7 @@ const TransferPage = () => {
   return (
     <main className="flex flex-col items-center">
       <section className="text-center mt-16  lg:w-2/4 w-full lg:px-0 px-4">
-        <header className="text-3xl">UCLID HUB PRENET Transfer</header>
+        <header className="text-3xl">UCLID HUB PRENET TRANSFER</header>
         <form
           className="flex gap-2 mt-16 lg:flex-row flex-col"
           onSubmit={handleSubmit}
