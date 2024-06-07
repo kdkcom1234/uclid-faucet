@@ -52,11 +52,11 @@ const NavBar = () => {
             <div className="flex flex-col lg:gap-2 gap-1">
               <small>
                 {balanceData?.evmBalance}
-                {EVM_NATIVE_COIN_SYMBOL}
+                &nbsp;{EVM_NATIVE_COIN_SYMBOL}
               </small>
               <small>
                 {balanceData?.balance}
-                {DENOM_SYMBOL}
+                &nbsp;{DENOM_SYMBOL}
               </small>
             </div>
           </div>

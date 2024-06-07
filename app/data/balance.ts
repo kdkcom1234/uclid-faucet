@@ -10,7 +10,6 @@ interface IBalanceData {
 
 const BALANCE_INIT = { balance: "0", evmBalance: "0" } as IBalanceData
 
-
 const fetchBalance = async (walletData?: IWalletData) => {
 
   if (walletData) {
@@ -19,16 +18,21 @@ const fetchBalance = async (walletData?: IWalletData) => {
     // uclid
     const client = createWalletClient();
     const res = await client.CosmosBankV1Beta1.query.queryBalance(address, { denom: "ucli" });
-    const quotient = BigInt(res.data.balance!.amount!) / BigInt(1000000);
-    const remainder = BigInt(res.data.balance!.amount!) % BigInt(1000000);
-    const balance = `${quotient}.${remainder == BigInt(0) ? "000000" : remainder}`;
+    const microDenomMultiplier = BigInt(1000000);
+    const quotient = BigInt(res.data.balance!.amount!) / microDenomMultiplier;
+    const remainder = BigInt(res.data.balance!.amount!) % microDenomMultiplier;
+    const remainderString = remainder.toString().padStart(6, '0');
+    const balance = `${quotient}.${remainderString}`;
 
     // evm
     const provider = new BrowserProvider(window.ethereum);
-    const evmBalanceFull = await provider.getBalance(evmAddress);
-    const quotientEvm = evmBalanceFull / BigInt("1000000000000000000");
-    const remainderEvm = evmBalanceFull % BigInt("1000000000000000000");
-    const evmBalance = `${quotientEvm}.${remainderEvm == BigInt(0) ? "000000" : remainderEvm.toString().slice(0, 6)}`;
+    const evmBalanceWei = await provider.getBalance(evmAddress);
+    const etherUnit = BigInt(1e18);
+    const evmBalanceEth = evmBalanceWei * BigInt(1e6) / etherUnit;
+    const integerPart = evmBalanceEth / BigInt(1e6);
+    const fractionalPart = evmBalanceEth % BigInt(1e6);
+
+    const evmBalance = `${integerPart}.${fractionalPart.toString().padStart(6, '0')}`;
 
     return {
       balance,
