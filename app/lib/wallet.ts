@@ -6,7 +6,7 @@ import { wordlist } from "@/app/constants/wordlist";
 
 /* !!!변경하면 지갑 바뀜 */
 const SIGN_MESSAGE = "Sign to use the network";
-const ADDRESS_PREFIX = "uclid"
+export const ADDRESS_PREFIX = "uclid"
 export const EVM_NATIVE_COIN_SYMBOL = "MATIC"
 export const DENOM_SYMBOL = "CLI"
 export const DENOM_MICRO_NAME = "ucli"

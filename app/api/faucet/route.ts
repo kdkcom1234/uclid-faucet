@@ -1,17 +1,11 @@
-import { IgniteClient } from "../../../../uclid-tsclient/client"
-import { IgntModule as CosmosBankV1Beta1 } from '../../../../uclid-tsclient/cosmos.bank.v1beta1'
+import { ADDRESS_PREFIX, createWalletClient } from "@/app/lib/wallet";
 import { DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
 
+const client = createWalletClient();
+
 export async function POST(req: Request) {
-  const wallet = await DirectSecp256k1HdWallet.fromMnemonic(process.env.FAUCET_MNEMONIC!.toString(), { prefix: "uclid" });
-  const Client = IgniteClient.plugin([CosmosBankV1Beta1])
-  const client = new Client(
-    {
-      apiURL: "",
-      rpcURL: "http://221.148.71.114:26657",
-    },
-    wallet
-  );
+  const wallet = await DirectSecp256k1HdWallet.fromMnemonic(process.env.FAUCET_MNEMONIC!.toString(), { prefix: ADDRESS_PREFIX });
+  client.useSigner(wallet);
 
   const fromAddress = (await wallet.getAccounts())[0].address;
   const body = await req.json();
