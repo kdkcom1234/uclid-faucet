@@ -18,6 +18,7 @@ const TransferPage = () => {
   const [txHash, setTxHash] = useState<string>("");
   const addressRef = useRef() as MutableRefObject<HTMLInputElement>;
   const amountRef = useRef() as MutableRefObject<HTMLInputElement>;
+  const granterRef = useRef() as MutableRefObject<HTMLInputElement>;
   const [requested, setRequested] = useState(false);
   const [loading, setLoading] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout>();
@@ -71,6 +72,7 @@ const TransferPage = () => {
           fee: {
             amount: [{ amount: "100000", denom: DENOM_MICRO_NAME }],
             gas: "100000",
+            granter: granterRef.current.value,
           },
         });
 
@@ -108,7 +110,7 @@ const TransferPage = () => {
 
   return (
     <main className="flex flex-col items-center">
-      <header className="text-3xl mt-16">UCLID HUB PRENET TRANSFER</header>
+      <header className="text-3xl mt-16 mx-8">UCLID HUB PRENET TRANSFER</header>
       <section className="text-center lg:w-2/4 w-full lg:px-0 px-4">
         <form
           className="flex gap-2 mt-16 lg:flex-row flex-col"
@@ -117,18 +119,26 @@ const TransferPage = () => {
           <input
             className="appearance-none border rounded w-full py-2 px-3 text-gray-700"
             type="text"
-            placeholder="Recipient Address, (uclid1....)"
+            placeholder="Recipient (uclid1...)"
             ref={addressRef}
             disabled={loading}
           />
           <input
-            className="appearance-none border rounded py-2 px-3 text-gray-700"
+            className="appearance-none border rounded w-full py-2 px-3 text-gray-700"
+            type="text"
+            placeholder="Fee Granter (optional, uclid1...)"
+            ref={granterRef}
+            disabled={loading}
+          />
+          <input
+            className="appearance-none border rounded md:w-36 w-full py-2 px-3 text-gray-700"
             type="number"
             step="0.000001"
             placeholder="Amount of CLI"
             ref={amountRef}
             disabled={loading}
           />
+
           <button
             disabled={loading}
             className="flex justify-center items-center lg:w-40 w-full bg-transparent hover:bg-slate-950 text-slate-700 font-semibold hover:text-white py-2 px-4 border border-slate-400 hover:border-transparent rounded"
