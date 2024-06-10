@@ -24,7 +24,7 @@ const NavBar = () => {
             <Link href="/explorer">Explorer</Link>
           </li>
           <li>
-            <Link href="/probe-node">Probe Node</Link>
+            <Link href="/probe">Probe Node</Link>
           </li>
         </ul>
       </div>

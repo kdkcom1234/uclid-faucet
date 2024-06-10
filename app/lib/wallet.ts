@@ -130,4 +130,3 @@ export const getWalletClientFromEvmSignature = async () => {
 
   return client;
 }
-
