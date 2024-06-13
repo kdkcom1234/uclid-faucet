@@ -23,9 +23,6 @@ const NavBar = () => {
           <li>
             <Link href="/explorer">Explorer</Link>
           </li>
-          <li>
-            <Link href="/probe">Probe Node</Link>
-          </li>
         </ul>
       </div>
       <div className="grow flex lg:justify-end justify-start lg:mt-0 mt-6">
